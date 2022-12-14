@@ -101,3 +101,11 @@ async (req, res) => {
   const talker = talkerEdited.find((t) => t.id === +id);
   return res.status(200).json(talker);
 });
+
+app.delete('/talker/:id', tokenValidation, async (req, res) => {
+  const { id } = req.params;
+  const data = await readFile();
+  const filterTalker = data.filter((e) => e.id !== +id);
+  await fs.writeFile(talkerPath, JSON.stringify(filterTalker, null, 2));
+  return res.status(204).json();
+});
