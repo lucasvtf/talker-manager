@@ -3,6 +3,13 @@ const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
 const { loginValidation } = require('./middlewares/loginValidation');
+const { tokenValidation } = require('./middlewares/tokenValidation');
+const { 
+  nameValidation, 
+  ageValidation, 
+  talkValidation, 
+  watchedValidation, 
+  rateValidation } = require('./middlewares/bodyValidation');
 
 const app = express();
 app.use(express.json());
@@ -22,6 +29,7 @@ app.listen(PORT, () => {
 // Endpoints
 
 const talkerPath = path.resolve(__dirname, './talker.json');
+
 const readFile = async () => {
   try {
     const data = await fs.readFile(talkerPath);
@@ -54,6 +62,20 @@ app.get('/talker/:id', async (req, res) => {
 app.post('/login', loginValidation, (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   if (token) {
-    return res.status(200).json({ token: `${token}` });
+    return res.status(200).json({ token });
   }
 }); 
+
+app.post('/talker', 
+tokenValidation, 
+nameValidation, 
+ageValidation, 
+talkValidation, 
+watchedValidation, 
+rateValidation, async (req, res) => {
+    const data = await readFile();
+    const newTalker = { id: data.length + 1, ...req.body };
+    data.push(newTalker);
+    await fs.writeFile(talkerPath, JSON.stringify(data, null, 2));
+    return res.status(201).json(newTalker);
+});
