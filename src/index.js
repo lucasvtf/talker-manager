@@ -27,14 +27,13 @@ const readFile = async () => {
   } catch (error) {
     console.error(`Arquivo não pode ser lido: ${error}`);
   }
-}
-
+};
 
 app.get('/talker', async (req, res) => {
   try {
     const data = await readFile();
-    return res.status(200).json( data )
+    return res.status(200).json(data);
 } catch (error) {
-    return res.status(200).json()
+    return res.status(200).json();
 }
-})
+});
