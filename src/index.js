@@ -72,10 +72,32 @@ nameValidation,
 ageValidation, 
 talkValidation, 
 watchedValidation, 
-rateValidation, async (req, res) => {
+rateValidation, 
+async (req, res) => {
     const data = await readFile();
     const newTalker = { id: data.length + 1, ...req.body };
     data.push(newTalker);
     await fs.writeFile(talkerPath, JSON.stringify(data, null, 2));
     return res.status(201).json(newTalker);
+});
+
+app.put('/talker/:id', 
+tokenValidation,
+nameValidation,
+ageValidation,
+talkValidation,
+watchedValidation,
+rateValidation,
+async (req, res) => {
+  const data = await readFile();
+  const { id } = req.params;
+  const talkerEdited = data.map((e) => {
+   if (e.id === +id) {
+    return { ...e, ...req.body };
+   } 
+   return e;
+  });
+  await fs.writeFile(talkerPath, JSON.stringify(talkerEdited, null, 2));
+  const talker = talkerEdited.find((t) => t.id === +id);
+  return res.status(200).json(talker);
 });
