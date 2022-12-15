@@ -39,6 +39,17 @@ const readFile = async () => {
   }
 };
 
+app.get('/talker/search', tokenValidation, async (req, res) => {
+  const { q } = req.query;
+  const data = await readFile();
+  const filterTalkers = data.filter((talker) => talker.name.includes(q));
+
+  if (!filterTalkers) {
+    return res.status(200).json([]);
+  }
+  return res.status(200).json(filterTalkers);
+});
+
 app.get('/talker', async (req, res) => {
     const data = await readFile();
     if (!data) {
