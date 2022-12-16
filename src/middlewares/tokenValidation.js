@@ -10,4 +10,4 @@ const tokenValidation = (req, res, next) => {
     next();
 };
 
-module.exports = { tokenValidation };
+module.exports = tokenValidation;
